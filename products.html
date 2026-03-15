@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дэлгүүр - Номад Сокс</title>
+    <meta name="description" content="Манай тав тухтай өдөр тутмын оймсны цуглуулгыг үзээрэй. Монголд үйлдвэрлэсэн чанартай оймс.">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🧦</span>
+                <span class="logo-text">Nomad Socks</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" data-i18n="nav.home">Нүүр</a></li>
+                <li><a href="products.html" class="active" data-i18n="nav.shop">Дэлгүүр</a></li>
+                <li><a href="about.html" data-i18n="nav.about">Бидний тухай</a></li>
+                <li><a href="contact.html" data-i18n="nav.contact">Холбоо барих</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="lang-toggle" id="lang-toggle" onclick="toggleLanguage()" title="Switch to English">EN</button>
+                <a href="cart.html" class="cart-link">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-count" id="cart-count">0</span>
+                </a>
+                <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1 data-i18n="products.title">Манай оймс</h1>
+                <p data-i18n="products.subtitle">Өдөр тутмын хэрэглээнд тохиромжтой тав тухтай хувцас</p>
+            </div>
+        </section>
+
+        <section class="products-section">
+            <div class="container">
+                <div class="products-toolbar">
+                    <div class="filter-group">
+                        <label for="category-filter" data-i18n="products.category">Ангилал:</label>
+                        <select id="category-filter">
+                            <option value="all" data-i18n="products.category.all">Бүх оймс</option>
+                            <option value="classic" data-i18n="products.category.classic">Сонгодог</option>
+                            <option value="patterned" data-i18n="products.category.patterned">Хээтэй</option>
+                            <option value="athletic" data-i18n="products.category.athletic">Спорт</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="sort-filter" data-i18n="products.sort">Эрэмбэлэх:</label>
+                        <select id="sort-filter">
+                            <option value="featured" data-i18n="products.sort.featured">Онцлох</option>
+                            <option value="price-low" data-i18n="products.sort.priceLow">Үнэ: Бага - Их</option>
+                            <option value="price-high" data-i18n="products.sort.priceHigh">Үнэ: Их - Бага</option>
+                            <option value="name" data-i18n="products.sort.name">Нэр</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="products-grid" id="products-grid">
+                    <!-- Products will be loaded by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <span class="logo-icon">🧦</span>
+                <span class="logo-text">Nomad Socks</span>
+                <p data-i18n="footer.tagline">Монголын чанартай оймс</p>
+            </div>
+            <div class="footer-links">
+                <h4 data-i18n="footer.quickLinks">Түргэн холбоос</h4>
+                <ul>
+                    <li><a href="products.html" data-i18n="nav.shop">Дэлгүүр</a></li>
+                    <li><a href="about.html" data-i18n="nav.about">Бидний тухай</a></li>
+                    <li><a href="contact.html" data-i18n="nav.contact">Холбоо барих</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4 data-i18n="footer.contact">Холбоо барих</h4>
+                <p>Email: hello@nomadsocks.com</p>
+                <p>Улаанбаатар, Монгол</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p data-i18n="footer.copyright">© 2024 Номад Сокс. Бүх эрх хуулиар хамгаалагдсан.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/translations.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

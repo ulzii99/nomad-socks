@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бүтээгдэхүүн - Номад Сокс</title>
+    <meta name="description" content="Бүтээгдэхүүний дэлгэрэнгүй үзэх - Монголын чанартай өдөр тутмын оймс.">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🧦</span>
+                <span class="logo-text">Nomad Socks</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" data-i18n="nav.home">Нүүр</a></li>
+                <li><a href="products.html" class="active" data-i18n="nav.shop">Дэлгүүр</a></li>
+                <li><a href="about.html" data-i18n="nav.about">Бидний тухай</a></li>
+                <li><a href="contact.html" data-i18n="nav.contact">Холбоо барих</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="lang-toggle" id="lang-toggle" onclick="toggleLanguage()" title="Switch to English">EN</button>
+                <a href="cart.html" class="cart-link">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-count" id="cart-count">0</span>
+                </a>
+                <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container">
+            <nav class="breadcrumb">
+                <a href="index.html" data-i18n="breadcrumb.home">Нүүр</a>
+                <span>/</span>
+                <a href="products.html" data-i18n="breadcrumb.shop">Дэлгүүр</a>
+                <span>/</span>
+                <span id="product-breadcrumb">Бүтээгдэхүүн</span>
+            </nav>
+
+            <div class="product-detail" id="product-detail">
+                <div class="product-gallery">
+                    <div class="product-main-image">
+                        <div class="placeholder-image large" id="product-image" data-text="Оймсны зураг"></div>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <h1 id="product-name">Ачааллаж байна...</h1>
+                    <p class="product-price" id="product-price">$0.00</p>
+                    <p class="product-description" id="product-description"></p>
+
+                    <div class="product-options">
+                        <div class="option-group">
+                            <label for="size-select" data-i18n="product.size">Хэмжээ:</label>
+                            <select id="size-select">
+                                <option value="S" data-i18n="product.size.s">Жижиг (US 5-7)</option>
+                                <option value="M" selected data-i18n="product.size.m">Дунд (US 8-10)</option>
+                                <option value="L" data-i18n="product.size.l">Том (US 11-13)</option>
+                            </select>
+                        </div>
+
+                        <div class="option-group">
+                            <label for="quantity-input" data-i18n="product.quantity">Тоо ширхэг:</label>
+                            <div class="quantity-selector">
+                                <button type="button" class="qty-btn" id="qty-minus">−</button>
+                                <input type="number" id="quantity-input" value="1" min="1" max="10">
+                                <button type="button" class="qty-btn" id="qty-plus">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-large" id="add-to-cart-btn" data-i18n="products.addToCart">Сагсанд нэмэх</button>
+
+                    <div class="product-details-accordion">
+                        <details open>
+                            <summary data-i18n="product.details">Бүтээгдэхүүний дэлгэрэнгүй</summary>
+                            <ul id="product-features">
+                                <li>Дээд зэргийн хөвөн холимог</li>
+                                <li>Бэхжүүлсэн өсгий ба хурууны хэсэг</li>
+                                <li>Тохь тавтай уян хатан бүс</li>
+                                <li>Угаалгын машинд угаах боломжтой</li>
+                            </ul>
+                        </details>
+                        <details>
+                            <summary data-i18n="product.shipping">Хүргэлтийн мэдээлэл</summary>
+                            <p data-i18n="product.shipping.desc">Бид Монголоос дэлхий даяар хүргэлт хийдэг. Дотоодын захиалга ихэвчлэн 3-5 ажлын өдөрт хүрнэ. Олон улсын хүргэлт байршлаас хамааран 10-20 ажлын өдөр болно.</p>
+                        </details>
+                        <details>
+                            <summary data-i18n="product.care">Арчилгааны зааварчилгаа</summary>
+                            <p data-i18n="product.care.desc">Хүйтэн усаар ижил өнгөтэй хувцастай хамт угаана. Бага дулаанаар хатаана. Цайруулагч хэрэглэхгүй. Индүүдэхгүй.</p>
+                        </details>
+                    </div>
+                </div>
+            </div>
+
+            <section class="related-products">
+                <h2 data-i18n="product.related">Танд бас таалагдаж магадгүй</h2>
+                <div class="products-grid" id="related-products">
+                    <!-- Related products loaded by JavaScript -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <span class="logo-icon">🧦</span>
+                <span class="logo-text">Nomad Socks</span>
+                <p data-i18n="footer.tagline">Монголын чанартай оймс</p>
+            </div>
+            <div class="footer-links">
+                <h4 data-i18n="footer.quickLinks">Түргэн холбоос</h4>
+                <ul>
+                    <li><a href="products.html" data-i18n="nav.shop">Дэлгүүр</a></li>
+                    <li><a href="about.html" data-i18n="nav.about">Бидний тухай</a></li>
+                    <li><a href="contact.html" data-i18n="nav.contact">Холбоо барих</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4 data-i18n="footer.contact">Холбоо барих</h4>
+                <p>Email: hello@nomadsocks.com</p>
+                <p>Улаанбаатар, Монгол</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p data-i18n="footer.copyright">© 2024 Номад Сокс. Бүх эрх хуулиар хамгаалагдсан.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/translations.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

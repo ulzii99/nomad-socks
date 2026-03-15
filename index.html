@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Номад Сокс - Монголын тав тухтай өдөр тутмын оймс</title>
+    <meta name="description" content="Монголд үйлдвэрлэсэн тав тухтай, чанартай өдөр тутмын оймс. Номад Сокс танд бат бөх, загварлаг оймс авчирна.">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🧦</span>
+                <span class="logo-text">Nomad Socks</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active" data-i18n="nav.home">Нүүр</a></li>
+                <li><a href="products.html" data-i18n="nav.shop">Дэлгүүр</a></li>
+                <li><a href="about.html" data-i18n="nav.about">Бидний тухай</a></li>
+                <li><a href="contact.html" data-i18n="nav.contact">Холбоо барих</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="lang-toggle" id="lang-toggle" onclick="toggleLanguage()" title="Switch to English">EN</button>
+                <a href="cart.html" class="cart-link">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-count" id="cart-count">0</span>
+                </a>
+                <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container hero-content">
+                <h1 data-i18n="hero.title">Алхам бүрт тав тухтай</h1>
+                <p data-i18n="hero.subtitle">Монголын зүрхнээс гар урлалын өдөр тутмын оймс. Таны мэдрэх чанар, таалагдах загвар.</p>
+                <a href="products.html" class="btn btn-primary" data-i18n="hero.cta">Худалдан авах</a>
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="container">
+                <div class="features-grid">
+                    <div class="feature">
+                        <span class="feature-icon">✨</span>
+                        <h3 data-i18n="feature.quality.title">Чанартай материал</h3>
+                        <p data-i18n="feature.quality.desc">Урт удаан тав тухтай байхын тулд дээд зэргийн хөвөн холимог</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🏭</span>
+                        <h3 data-i18n="feature.made.title">Монголд үйлдвэрлэсэн</h3>
+                        <p data-i18n="feature.made.desc">Орчин үеийн машинаар анхааралтай хийсэн</p>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🌍</span>
+                        <h3 data-i18n="feature.shipping.title">Дэлхий даяар хүргэлт</h3>
+                        <p data-i18n="feature.shipping.desc">Бид таны хаалган дээр хүргэнэ</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="featured-products">
+            <div class="container">
+                <h2 data-i18n="products.featured">Онцлох оймс</h2>
+                <div class="products-grid" id="featured-products">
+                    <!-- Products will be loaded by JavaScript -->
+                </div>
+                <div class="section-cta">
+                    <a href="products.html" class="btn btn-secondary" data-i18n="products.viewAll">Бүх бүтээгдэхүүн харах</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-preview">
+            <div class="container about-preview-content">
+                <div class="about-text">
+                    <h2 data-i18n="about.story.title">Манай түүх</h2>
+                    <p data-i18n="about.story.p1">Номад Сокс нь энгийн санаанаас төрсөн: хүмүүсийн найдаж болох тав тухтай, чанартай өдөр тутмын оймс бүтээх. Монголын Улаанбаатарт байрлах бид бол урлаг дадлагад хайртай жижиг гэр бүлийн үйлдвэр.</p>
+                    <a href="about.html" class="btn btn-outline" data-i18n="products.viewAll">Бүх бүтээгдэхүүн харах</a>
+                </div>
+                <div class="about-image">
+                    <div class="placeholder-image" data-text="Our Workshop"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="newsletter">
+            <div class="container">
+                <h2 data-i18n="newsletter.title">Холбоотой байгаарай</h2>
+                <p data-i18n="newsletter.subtitle">Шинэ оймсны загвар болон тусгай санал авахын тулд бүртгүүлээрэй</p>
+                <form class="newsletter-form" id="newsletter-form">
+                    <input type="email" data-i18n-placeholder="newsletter.placeholder" placeholder="Имэйл хаягаа оруулна уу" required>
+                    <button type="submit" class="btn btn-primary" data-i18n="newsletter.subscribe">Бүртгүүлэх</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <span class="logo-icon">🧦</span>
+                <span class="logo-text">Nomad Socks</span>
+                <p data-i18n="footer.tagline">Монголын чанартай оймс</p>
+            </div>
+            <div class="footer-links">
+                <h4 data-i18n="footer.quickLinks">Түргэн холбоос</h4>
+                <ul>
+                    <li><a href="products.html" data-i18n="nav.shop">Дэлгүүр</a></li>
+                    <li><a href="about.html" data-i18n="nav.about">Бидний тухай</a></li>
+                    <li><a href="contact.html" data-i18n="nav.contact">Холбоо барих</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4 data-i18n="footer.contact">Холбоо барих</h4>
+                <p>Email: hello@nomadsocks.com</p>
+                <p>Улаанбаатар, Монгол</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p data-i18n="footer.copyright">© 2024 Номад Сокс. Бүх эрх хуулиар хамгаалагдсан.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/translations.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
