@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Нэвтрэх - Номад Сокс</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🧦</span>
+                <span class="logo-text">Nomad Socks</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" data-i18n="nav.home">Нүүр</a></li>
+                <li><a href="products.html" data-i18n="nav.shop">Дэлгүүр</a></li>
+                <li><a href="about.html" data-i18n="nav.about">Бидний тухай</a></li>
+                <li><a href="contact.html" data-i18n="nav.contact">Холбоо барих</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="lang-toggle" id="lang-toggle" onclick="toggleLanguage()" title="Switch to English">EN</button>
+                <a href="cart.html" class="cart-link">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-count" id="cart-count">0</span>
+                </a>
+                <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1 data-i18n="auth.login">Нэвтрэх</h1>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container" style="max-width: 500px;">
+                <form id="login-form" class="form-card">
+                    <div class="form-group">
+                        <label for="username" data-i18n="auth.username">Хэрэглэгчийн нэр</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" data-i18n="auth.password">Нууц үг</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div id="login-error" class="form-error" style="display:none;"></div>
+                    <button type="submit" class="btn btn-primary btn-full" data-i18n="auth.loginBtn">Нэвтрэх</button>
+                    <p class="form-footer">
+                        <span data-i18n="auth.noAccount">Бүртгэл байхгүй юу?</span>
+                        <a href="register.html" data-i18n="auth.registerLink">Бүртгүүлэх</a>
+                    </p>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Nomad Socks</h3>
+                    <p data-i18n="footer.tagline">Монголын чанартай оймс</p>
+                </div>
+                <div class="footer-col">
+                    <h4 data-i18n="footer.quickLinks">Түргэн холбоос</h4>
+                    <ul>
+                        <li><a href="products.html" data-i18n="nav.shop">Дэлгүүр</a></li>
+                        <li><a href="about.html" data-i18n="nav.about">Бидний тухай</a></li>
+                        <li><a href="contact.html" data-i18n="nav.contact">Холбоо барих</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-i18n="footer.copyright">© 2024 Номад Сокс. Бүх эрх хуулиар хамгаалагдсан.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/translations.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errorEl = document.getElementById('login-error');
+            errorEl.style.display = 'none';
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                await api.login(username, password);
+                showToast('Амжилттай нэвтэрлээ!', 'success');
+                setTimeout(() => { window.location.href = 'index.html'; }, 500);
+            } catch (err) {
+                errorEl.textContent = 'Хэрэглэгчийн нэр эсвэл нууц үг буруу байна.';
+                errorEl.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

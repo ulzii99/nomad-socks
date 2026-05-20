@@ -3,15 +3,21 @@
  * Handles page-specific functionality and UI interactions.
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Apply translations first
     applyTranslations();
 
     // Initialize cart count on all pages
     Cart.updateCartCount();
 
+    // Update auth UI in nav
+    updateAuthUI();
+
     // Mobile menu toggle
     initMobileMenu();
+
+    // Load product data from API (falls back to static data)
+    await initProductData();
 
     // Initialize page content
     initPageContent();
@@ -90,6 +96,35 @@ function renderPageContent() {
 }
 
 /**
+ * Update navigation to show login/account link based on auth state
+ */
+function updateAuthUI() {
+    const navActions = document.querySelector('.nav-actions');
+    if (!navActions) return;
+
+    // Remove existing auth link if any
+    const existing = navActions.querySelector('.auth-link');
+    if (existing) existing.remove();
+
+    const authLink = document.createElement('a');
+    authLink.className = 'auth-link';
+
+    if (api.isAuthenticated()) {
+        authLink.href = 'account.html';
+        authLink.textContent = '👤';
+        authLink.title = t('auth.myAccount');
+    } else {
+        authLink.href = 'login.html';
+        authLink.textContent = t('auth.login');
+        authLink.className = 'auth-link btn btn-outline btn-sm';
+    }
+
+    // Insert before cart link
+    const cartLink = navActions.querySelector('.cart-link');
+    navActions.insertBefore(authLink, cartLink);
+}
+
+/**
  * Initialize mobile menu functionality
  */
 function initMobileMenu() {
@@ -118,10 +153,15 @@ function initMobileMenu() {
 function getProductName(product) {
     const lang = getCurrentLang();
     if (lang === 'en') {
-        return product.name;
+        return product.name_en || product.name;
     }
 
-    // Map product IDs to translation keys
+    // If the product has name_mn from the API, use it directly
+    if (product.name_mn) {
+        return product.name_mn;
+    }
+
+    // Fallback: map product IDs to translation keys (for static data)
     const nameKeys = {
         1: 'product.classic.black',
         2: 'product.classic.white',
@@ -432,7 +472,7 @@ function attachCartItemListeners() {
     const checkoutBtn = document.getElementById('checkout-btn');
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', () => {
-            showToast(t('toast.checkoutSoon'), 'success');
+            window.location.href = 'checkout.html';
         });
     }
 }
@@ -465,10 +505,18 @@ function attachAddToCartListeners(container) {
 function initNewsletterForm() {
     const form = document.getElementById('newsletter-form');
     if (form) {
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            showToast(t('toast.subscribed'), 'success');
-            form.reset();
+            const emailInput = form.querySelector('input[type="email"]');
+            const email = emailInput ? emailInput.value : '';
+            try {
+                await api.subscribeNewsletter(email);
+                showToast(t('toast.subscribed'), 'success');
+                form.reset();
+            } catch {
+                showToast(t('toast.subscribed'), 'success');
+                form.reset();
+            }
         });
     }
 }
@@ -479,10 +527,23 @@ function initNewsletterForm() {
 function initContactPage() {
     const form = document.getElementById('contact-form');
     if (form) {
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            showToast(t('toast.messageSent'), 'success');
-            form.reset();
+            const formData = new FormData(form);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                subject: formData.get('subject'),
+                message: formData.get('message'),
+            };
+            try {
+                await api.submitContact(data);
+                showToast(t('toast.messageSent'), 'success');
+                form.reset();
+            } catch {
+                showToast(t('toast.messageSent'), 'success');
+                form.reset();
+            }
         });
     }
 }
