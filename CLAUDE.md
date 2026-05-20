@@ -4,79 +4,116 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Nomad Socks** - E-commerce website for a Mongolian sock business. Currently a static frontend with plans for backend integration.
+**Nomad Socks** - Full-stack e-commerce website for a Mongolian sock business.
 
 - **Business**: Family-owned sock manufacturing with 4 machines in Mongolia
 - **Target**: Both local Mongolian and international customers
-- **Products**: Casual everyday socks
+- **Products**: Casual everyday socks (12 products, 3 categories)
 
 ## Tech Stack
 
-- Plain HTML5, CSS3, JavaScript (no frameworks)
-- LocalStorage for cart persistence
-- Designed for future backend integration
+- **Frontend**: Plain HTML5, CSS3, JavaScript (no frameworks)
+- **Backend**: Django 4.2 + Django REST Framework
+- **Auth**: JWT via djangorestframework-simplejwt
+- **Database**: SQLite (dev), PostgreSQL (production)
+- **Payments**: QPay, SocialPay (MNT domestic), Stripe (USD international)
+- **i18n**: Bilingual Mongolian/English via translations.js + DB fields
 
 ## Project Structure
 
 ```
 sock_website/
-├── index.html          # Homepage with hero, features, featured products
-├── products.html       # Product listing with filters
-├── product.html        # Single product detail (uses ?id= query param)
-├── cart.html           # Shopping cart
-├── about.html          # About the business
-├── contact.html        # Contact form
-├── css/
-│   └── styles.css      # All styles, CSS variables at top
-└── js/
-    ├── data.js         # Product data and helper functions
-    ├── cart.js         # Cart logic (localStorage-based)
-    └── main.js         # Page initialization and UI interactions
+├── index.html              # Homepage
+├── products.html           # Product listing with filters
+├── product.html            # Product detail (?id= param)
+├── cart.html               # Shopping cart
+├── checkout.html           # Checkout with shipping + payment
+├── login.html              # Login
+├── register.html           # Registration
+├── account.html            # User account & order history
+├── admin-dashboard.html    # Admin analytics dashboard
+├── about.html              # About the business
+├── contact.html            # Contact form
+├── css/styles.css          # All styles
+├── js/
+│   ├── api.js              # API client (auth, cart, orders, payments)
+│   ├── data.js             # Product data (API with static fallback)
+│   ├── cart.js             # Cart logic (localStorage)
+│   ├── translations.js     # Bilingual MN/EN translations
+│   └── main.js             # Page init and UI interactions
+└── backend/                # Django project
+    ├── manage.py
+    ├── requirements.txt
+    ├── nomadsocks/          # Project config (settings, urls)
+    ├── accounts/            # Custom User, JWT auth, profile
+    ├── products/            # Product catalog, categories
+    ├── cart/                # Server-side cart (session/user)
+    ├── orders/              # Orders, checkout, status tracking
+    ├── payments/            # QPay, SocialPay, Stripe providers
+    ├── shipping/            # Zones, rates, shipments
+    ├── inventory/           # Stock tracking, machines, production
+    ├── content/             # Contact form, newsletter
+    └── analytics/           # Dashboard, revenue reports
 ```
 
 ## Development
 
-Open `index.html` directly in browser, or use any local server:
-
 ```bash
-# Python
+# Start backend (port 8001)
+cd backend && python manage.py runserver 8001
+
+# Start frontend (port 8000)
 python -m http.server 8000
 
-# Node.js
-npx serve
+# Admin panel
+http://localhost:8001/admin/  (admin / admin123)
+
+# Admin dashboard
+http://localhost:8000/admin-dashboard.html
 ```
 
-## Architecture Notes
+## Backend Apps
 
-### Product Data (`js/data.js`)
-- `PRODUCTS` array contains all product objects
-- Helper functions: `getAllProducts()`, `getFeaturedProducts()`, `getProductById()`, `getProductsByCategory()`, `sortProducts()`
-- **Backend migration**: Replace these functions with API calls
+| App | Purpose | Key Models |
+|-----|---------|------------|
+| accounts | Auth, profiles | Custom User |
+| products | Catalog | Product, Category, ProductSize, ProductFeature |
+| cart | Shopping cart | Cart, CartItem |
+| orders | Checkout & tracking | Order, OrderItem, OrderStatusHistory |
+| payments | Payment processing | Payment (QPay/SocialPay/Stripe providers) |
+| shipping | Delivery | ShippingZone, ShippingRate, Shipment |
+| inventory | Stock management | InventoryRecord, Machine, ProductionRun |
+| content | Forms | ContactSubmission, NewsletterSubscriber |
+| analytics | Reports | (queries other models, no own models) |
 
-### Cart System (`js/cart.js`)
-- `Cart` object with methods: `getItems()`, `addItem()`, `updateQuantity()`, `removeItem()`, `clear()`
-- Uses localStorage key `nomad_socks_cart`
-- `showToast()` for user feedback
-- **Backend migration**: Replace localStorage with API calls, keep same interface
+## API Endpoints
 
-### Page Routing (`js/main.js`)
-- Detects current page via `window.location.pathname`
-- Product detail page uses `?id=` query parameter
-- Each page has its own init function: `initHomePage()`, `initProductsPage()`, etc.
+- `GET /api/v1/products/` — product list (filterable)
+- `GET /api/v1/products/{slug}/` — product detail
+- `GET /api/v1/categories/` — categories
+- `POST /api/v1/accounts/register/` — register
+- `POST /api/v1/accounts/token/` — JWT login
+- `GET/POST /api/v1/cart/` — cart operations
+- `POST /api/v1/orders/checkout/` — place order
+- `POST /api/v1/payments/create/` — create payment
+- `GET /api/v1/shipping/rates/` — shipping rates
+- `POST /api/v1/contact/` — contact form
+- `GET /api/v1/admin/dashboard/` — admin metrics
+- `GET /api/v1/admin/inventory/` — stock overview
 
-### CSS Theming
-- Color palette inspired by Mongolian landscape (earth tones, sky blues)
-- CSS variables defined in `:root` for easy theming
-- Responsive breakpoints: 992px, 768px, 480px
+## Payment Integration
 
-## Placeholder Images
+Payment providers are in `backend/payments/providers.py`. Each implements `create_invoice()` and `check_payment()`. Without API credentials, they return mock responses for development.
 
-Images use CSS-generated placeholders via `.placeholder-image` class with `data-text` attribute. Replace with actual `<img>` tags when images are available.
+**To go live, set in settings.py:**
+- `QPAY_USERNAME`, `QPAY_PASSWORD`, `QPAY_INVOICE_CODE`
+- `SOCIALPAY_APP_ID`, `SOCIALPAY_SECRET`
+- `STRIPE_SECRET_KEY`
 
-## Future Backend Integration Points
+## Frontend Architecture
 
-1. **Product data**: Replace `js/data.js` functions with fetch calls
-2. **Cart**: Replace localStorage in `Cart` object with API calls
-3. **Forms**: Newsletter and contact forms currently show toast only - add actual submission
-4. **Checkout**: Button currently shows "coming soon" toast
-5. **User accounts**: No auth system yet - add when backend ready
+- `js/api.js` — central API client with JWT auth (auto-refresh), all endpoints
+- `js/data.js` — fetches products from API on load, falls back to static `STATIC_PRODUCTS`
+- `js/main.js` — page routing, async init, auth UI updates
+- Bilingual: products have `name_en`/`name_mn` from DB; UI strings via `translations.js`
+- CSS variables in `:root`, responsive at 992px/768px/480px

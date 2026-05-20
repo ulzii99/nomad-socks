@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Nomad Socks</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--color-white);
+            padding: 1.5rem;
+            border-radius: var(--radius-md);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .stat-card h3 {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-dark);
+        }
+        .stat-card .stat-sub {
+            font-size: 0.85rem;
+            color: var(--color-text-light);
+            margin-top: 0.25rem;
+        }
+        .section-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--color-border);
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--color-white);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .data-table th, .data-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .data-table th {
+            background: var(--color-light);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: var(--color-text-light);
+        }
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        @media (max-width: 768px) {
+            .two-col { grid-template-columns: 1fr; }
+        }
+        .machine-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        .machine-status.active { background: var(--color-success); }
+        .machine-status.maintenance { background: #f59e0b; }
+        .machine-status.inactive { background: var(--color-error); }
+        .admin-nav {
+            background: var(--color-dark);
+            padding: 0.75rem 0;
+        }
+        .admin-nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-nav a {
+            color: var(--color-white);
+            text-decoration: none;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        .admin-nav a:hover { opacity: 1; }
+        .admin-nav .brand {
+            font-weight: 700;
+            font-size: 1.1rem;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body style="background: var(--color-light);">
+    <div class="admin-nav">
+        <div class="container">
+            <span class="brand" style="color: var(--color-white);">Nomad Socks Admin</span>
+            <div>
+                <a href="index.html" style="margin-right: 1rem;">View Site</a>
+                <a href="http://localhost:8001/admin/" target="_blank">Django Admin</a>
+            </div>
+        </div>
+    </div>
+
+    <main class="section">
+        <div class="container">
+            <h1 style="margin-bottom: 1.5rem;">Dashboard</h1>
+
+            <!-- Key Metrics -->
+            <div class="dashboard-grid" id="metrics">
+                <div class="stat-card">
+                    <h3>Total Revenue</h3>
+                    <div class="stat-value" id="revenue-total">-</div>
+                    <div class="stat-sub" id="revenue-30d">Last 30 days: -</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Orders</h3>
+                    <div class="stat-value" id="orders-total">-</div>
+                    <div class="stat-sub" id="orders-7d">Last 7 days: -</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Inventory</h3>
+                    <div class="stat-value" id="stock-total">-</div>
+                    <div class="stat-sub" id="stock-alerts">-</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Machines</h3>
+                    <div class="stat-value" id="machines-active">-</div>
+                    <div class="stat-sub" id="machines-total">of - active</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Subscribers</h3>
+                    <div class="stat-value" id="subscribers">-</div>
+                    <div class="stat-sub">Newsletter</div>
+                </div>
+            </div>
+
+            <div class="two-col">
+                <!-- Recent Orders -->
+                <div>
+                    <h2 class="section-title">Recent Orders</h2>
+                    <table class="data-table" id="orders-table">
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-tbody">
+                            <tr><td colspan="4">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Inventory Alerts -->
+                <div>
+                    <h2 class="section-title">Inventory Alerts</h2>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Size</th>
+                                <th>Stock</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-alerts-tbody">
+                            <tr><td colspan="3">Loading...</td></tr>
+                        </tbody>
+                    </table>
+
+                    <h2 class="section-title" style="margin-top: 2rem;">Machines</h2>
+                    <div id="machines-list"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const API_BASE = 'http://localhost:8001/api/v1';
+
+        function getToken() {
+            return localStorage.getItem('access_token');
+        }
+
+        async function authFetch(endpoint) {
+            const token = getToken();
+            if (!token) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            const res = await fetch(`${API_BASE}${endpoint}`, {
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
+            if (res.status === 401 || res.status === 403) {
+                alert('Admin access required. Please login as an admin user.');
+                window.location.href = 'login.html';
+                return null;
+            }
+            return res.json();
+        }
+
+        async function loadDashboard() {
+            // Dashboard metrics
+            const dash = await authFetch('/admin/dashboard/');
+            if (!dash) return;
+
+            document.getElementById('revenue-total').textContent = `₮${Number(dash.revenue.total).toLocaleString()}`;
+            document.getElementById('revenue-30d').textContent = `Last 30 days: ₮${Number(dash.revenue.last_30_days).toLocaleString()}`;
+            document.getElementById('orders-total').textContent = dash.orders.total;
+            document.getElementById('orders-7d').textContent = `Last 7 days: ${dash.orders.last_7_days}`;
+            document.getElementById('stock-total').textContent = `${dash.inventory.total_stock} units`;
+            document.getElementById('stock-alerts').textContent =
+                `${dash.inventory.low_stock} low / ${dash.inventory.out_of_stock} out`;
+            document.getElementById('machines-active').textContent = `${dash.machines.active}/${dash.machines.total}`;
+            document.getElementById('machines-total').textContent = `${dash.machines.active} of ${dash.machines.total} active`;
+            document.getElementById('subscribers').textContent = dash.subscribers;
+
+            // Recent orders
+            const orders = await authFetch('/admin/orders/');
+            if (orders) {
+                const tbody = document.getElementById('orders-tbody');
+                if (orders.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4">No orders yet</td></tr>';
+                } else {
+                    tbody.innerHTML = orders.slice(0, 10).map(o => `
+                        <tr>
+                            <td><strong>${o.order_number}</strong></td>
+                            <td><span class="order-status ${
+                                ['confirmed','delivered'].includes(o.status) ? 'status-success' :
+                                ['cancelled','refunded'].includes(o.status) ? 'status-error' : 'status-pending'
+                            }">${o.status}</span></td>
+                            <td>₮${Number(o.total).toLocaleString()}</td>
+                            <td>${new Date(o.created_at).toLocaleDateString()}</td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+            // Inventory alerts
+            const inv = await authFetch('/admin/inventory/');
+            if (inv) {
+                const tbody = document.getElementById('inventory-alerts-tbody');
+                const alerts = [...inv.out_of_stock, ...inv.low_stock];
+                if (alerts.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="3" style="color: var(--color-success);">All stock levels healthy</td></tr>';
+                } else {
+                    tbody.innerHTML = alerts.map(item => `
+                        <tr>
+                            <td>${item.product}</td>
+                            <td>${item.size}</td>
+                            <td style="color: ${item.quantity === 0 ? 'var(--color-error)' : '#854d0e'}; font-weight: 600;">
+                                ${item.quantity}
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            }
+
+            // Machines
+            const machines = await authFetch('/admin/machines/');
+            if (machines) {
+                document.getElementById('machines-list').innerHTML = machines.map(m => `
+                    <div style="padding: 0.5rem 0; display: flex; align-items: center;">
+                        <span class="machine-status ${m.status}"></span>
+                        <strong>${m.name}</strong>
+                        <span style="margin-left: auto; font-size: 0.85rem; color: var(--color-text-light);">
+                            ${m.status}
+                        </span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        loadDashboard();
+    </script>
+</body>
+</html>

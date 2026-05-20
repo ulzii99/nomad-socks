@@ -77,6 +77,11 @@
                                 <textarea id="notes" name="notes" rows="2"></textarea>
                             </div>
 
+                            <h2 data-i18n="checkout.shippingMethod">Хүргэлтийн хэлбэр</h2>
+                            <div class="payment-methods" id="shipping-rates">
+                                <p data-i18n="account.loading">Ачааллаж байна...</p>
+                            </div>
+
                             <h2 data-i18n="checkout.payment">Төлбөрийн хэлбэр</h2>
                             <div class="payment-methods">
                                 <label class="payment-method selected">
@@ -120,7 +125,7 @@
                             </div>
                             <div class="checkout-total-row">
                                 <span data-i18n="cart.shipping">Хүргэлт</span>
-                                <span data-i18n="cart.shippingCalc">Тооцоолно</span>
+                                <span id="checkout-shipping">-</span>
                             </div>
                             <div class="checkout-total-row checkout-total-final">
                                 <span data-i18n="cart.total">Нийт</span>
@@ -201,14 +206,88 @@
             totalEl.textContent = formatPrice(subtotal);
         }
 
+        let selectedShippingPrice = 0;
+
         // Wait for products to load then render
         setTimeout(renderCheckoutSummary, 500);
 
+        // Load shipping rates
+        async function loadShippingRates() {
+            try {
+                const zones = await api.get('/shipping/rates/?country=MN');
+                const container = document.getElementById('shipping-rates');
+                const lang = getCurrentLang();
+
+                if (!zones || zones.length === 0) {
+                    container.innerHTML = '<p>No shipping rates available.</p>';
+                    return;
+                }
+
+                let html = '';
+                let first = true;
+                for (const zone of zones) {
+                    for (const rate of zone.rates) {
+                        const name = lang === 'mn' && rate.name_mn ? rate.name_mn : rate.name;
+                        const zoneName = lang === 'mn' && zone.name_mn ? zone.name_mn : zone.name;
+                        const days = `${rate.estimated_days_min}-${rate.estimated_days_max} ${lang === 'mn' ? 'өдөр' : 'days'}`;
+                        const priceText = `₮${Number(rate.price).toLocaleString()}`;
+                        const freeNote = rate.free_shipping_threshold > 0
+                            ? ` (₮${Number(rate.free_shipping_threshold).toLocaleString()}+ ${lang === 'mn' ? 'дээш үнэгүй' : 'free'})`
+                            : '';
+
+                        html += `
+                            <label class="payment-method ${first ? 'selected' : ''}">
+                                <input type="radio" name="shipping_rate" value="${rate.id}"
+                                    data-price="${rate.price}" data-threshold="${rate.free_shipping_threshold}"
+                                    ${first ? 'checked' : ''}>
+                                <span class="payment-method-label">
+                                    <strong>${zoneName} - ${name}</strong>
+                                    <small>${days} | ${priceText}${freeNote}</small>
+                                </span>
+                            </label>
+                        `;
+                        if (first) {
+                            selectedShippingPrice = parseFloat(rate.price);
+                            first = false;
+                        }
+                    }
+                }
+                container.innerHTML = html;
+                updateTotals();
+
+                // Add listeners for shipping rate selection
+                container.querySelectorAll('input[name="shipping_rate"]').forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        container.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
+                        radio.closest('.payment-method').classList.add('selected');
+                        const subtotal = Cart.getSubtotal();
+                        const threshold = parseFloat(radio.dataset.threshold);
+                        selectedShippingPrice = (threshold > 0 && subtotal >= threshold) ? 0 : parseFloat(radio.dataset.price);
+                        updateTotals();
+                    });
+                });
+            } catch {
+                document.getElementById('shipping-rates').innerHTML = '<p>Could not load shipping rates.</p>';
+            }
+        }
+
+        function updateTotals() {
+            const subtotal = Cart.getSubtotal();
+            const shippingEl = document.getElementById('checkout-shipping');
+            const totalEl = document.getElementById('checkout-total');
+            shippingEl.textContent = selectedShippingPrice > 0 ? `₮${selectedShippingPrice.toLocaleString()}` : (getCurrentLang() === 'mn' ? 'Үнэгүй' : 'Free');
+            totalEl.textContent = formatPrice(subtotal + selectedShippingPrice);
+        }
+
+        setTimeout(loadShippingRates, 600);
+
         // Payment method selection styling
-        document.querySelectorAll('.payment-method input').forEach(radio => {
-            radio.addEventListener('change', () => {
-                document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
-                radio.closest('.payment-method').classList.add('selected');
+        document.querySelectorAll('.payment-methods:not(#shipping-rates)').forEach(container => {
+            container.querySelectorAll('.payment-method input').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    container.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
+                    radio.closest('.payment-method').classList.add('selected');
+                });
             });
         });
 
