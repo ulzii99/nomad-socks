@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from rest_framework import status
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -112,6 +113,56 @@ class OrderDetailView(APIView):
                 {"error": "Order not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
+
+        serializer = OrderSerializer(order)
+        return Response(serializer.data)
+
+
+class AdminOrderListView(APIView):
+    """Admin: list all orders with filtering."""
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        orders = Order.objects.all()
+        status_filter = request.query_params.get("status")
+        if status_filter:
+            orders = orders.filter(status=status_filter)
+        serializer = OrderListSerializer(orders, many=True)
+        return Response(serializer.data)
+
+
+class AdminOrderStatusUpdateView(APIView):
+    """Admin: update order status."""
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, order_number):
+        try:
+            order = Order.objects.get(order_number=order_number)
+        except Order.DoesNotExist:
+            return Response(
+                {"error": "Order not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        new_status = request.data.get("status")
+        note = request.data.get("note", "")
+
+        valid_statuses = [s[0] for s in Order.STATUS_CHOICES]
+        if new_status not in valid_statuses:
+            return Response(
+                {"error": f"Invalid status. Must be one of: {valid_statuses}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        order.status = new_status
+        order.save()
+
+        OrderStatusHistory.objects.create(
+            order=order,
+            status=new_status,
+            note=note,
+            created_by=request.user,
+        )
 
         serializer = OrderSerializer(order)
         return Response(serializer.data)

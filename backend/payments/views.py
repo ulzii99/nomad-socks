@@ -2,9 +2,23 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from inventory.services import decrement_inventory_for_order
 from orders.models import Order, OrderStatusHistory
 from .models import Payment
 from .providers import get_provider
+
+
+def confirm_order_payment(order, provider_name, note=""):
+    """Shared logic: confirm order and decrement inventory."""
+    if order.status != "pending":
+        return
+    order.status = "confirmed"
+    order.save()
+    OrderStatusHistory.objects.create(
+        order=order, status="confirmed",
+        note=note or f"Payment received via {provider_name}",
+    )
+    decrement_inventory_for_order(order)
 
 
 class CreatePaymentView(APIView):
@@ -81,16 +95,9 @@ class CheckPaymentView(APIView):
         provider = get_provider(payment.provider)
         new_status = provider.check_payment(payment)
 
-        # If payment is now paid, update the order
-        if new_status == "paid" and payment.order.status == "pending":
-            order = payment.order
-            order.status = "confirmed"
-            order.save()
-            OrderStatusHistory.objects.create(
-                order=order,
-                status="confirmed",
-                note=f"Payment received via {payment.provider}",
-            )
+        # If payment is now paid, confirm the order
+        if new_status == "paid":
+            confirm_order_payment(payment.order, payment.provider)
 
         return Response({
             "payment_id": payment.id,
@@ -120,14 +127,8 @@ class QPayCallbackView(APIView):
         provider = get_provider("qpay")
         new_status = provider.check_payment(payment)
 
-        if new_status == "paid" and payment.order.status == "pending":
-            order = payment.order
-            order.status = "confirmed"
-            order.save()
-            OrderStatusHistory.objects.create(
-                order=order, status="confirmed",
-                note="Payment confirmed via QPay callback",
-            )
+        if new_status == "paid":
+            confirm_order_payment(payment.order, "qpay", "Payment confirmed via QPay callback")
 
         return Response({"status": "ok"})
 
@@ -150,13 +151,7 @@ class SocialPayCallbackView(APIView):
         provider = get_provider("socialpay")
         new_status = provider.check_payment(payment)
 
-        if new_status == "paid" and payment.order.status == "pending":
-            order = payment.order
-            order.status = "confirmed"
-            order.save()
-            OrderStatusHistory.objects.create(
-                order=order, status="confirmed",
-                note="Payment confirmed via SocialPay callback",
-            )
+        if new_status == "paid":
+            confirm_order_payment(payment.order, "socialpay", "Payment confirmed via SocialPay callback")
 
         return Response({"status": "ok"})

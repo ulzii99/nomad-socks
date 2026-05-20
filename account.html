@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Миний бүртгэл - Номад Сокс</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🧦</span>
+                <span class="logo-text">Nomad Socks</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" data-i18n="nav.home">Нүүр</a></li>
+                <li><a href="products.html" data-i18n="nav.shop">Дэлгүүр</a></li>
+                <li><a href="about.html" data-i18n="nav.about">Бидний тухай</a></li>
+                <li><a href="contact.html" data-i18n="nav.contact">Холбоо барих</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="lang-toggle" id="lang-toggle" onclick="toggleLanguage()" title="Switch to English">EN</button>
+                <a href="cart.html" class="cart-link">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-count" id="cart-count">0</span>
+                </a>
+                <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1 data-i18n="auth.myAccount">Миний бүртгэл</h1>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container">
+                <!-- Profile Card -->
+                <div class="account-grid">
+                    <div class="account-sidebar">
+                        <div class="form-card">
+                            <h3 id="profile-greeting"></h3>
+                            <p id="profile-email" class="text-muted"></p>
+                            <p id="profile-phone" class="text-muted"></p>
+                            <button class="btn btn-outline btn-full" id="logout-btn" data-i18n="auth.logout">Гарах</button>
+                        </div>
+                    </div>
+
+                    <!-- Orders -->
+                    <div class="account-orders">
+                        <h2 data-i18n="account.orders">Миний захиалгууд</h2>
+                        <div id="orders-list">
+                            <p data-i18n="account.loading">Ачааллаж байна...</p>
+                        </div>
+                        <div id="no-orders" style="display:none;">
+                            <p data-i18n="account.noOrders">Танд одоогоор захиалга байхгүй.</p>
+                            <a href="products.html" class="btn btn-primary" data-i18n="cart.startShopping">Худалдан авалт эхлэх</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Nomad Socks</h3>
+                    <p data-i18n="footer.tagline">Монголын чанартай оймс</p>
+                </div>
+                <div class="footer-col">
+                    <h4 data-i18n="footer.quickLinks">Түргэн холбоос</h4>
+                    <ul>
+                        <li><a href="products.html" data-i18n="nav.shop">Дэлгүүр</a></li>
+                        <li><a href="about.html" data-i18n="nav.about">Бидний тухай</a></li>
+                        <li><a href="contact.html" data-i18n="nav.contact">Холбоо барих</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-i18n="footer.copyright">© 2024 Номад Сокс. Бүх эрх хуулиар хамгаалагдсан.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/translations.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        const STATUS_LABELS = {
+            pending: { en: 'Pending', mn: 'Хүлээгдэж байна' },
+            confirmed: { en: 'Confirmed', mn: 'Баталгаажсан' },
+            processing: { en: 'Processing', mn: 'Боловсруулж байна' },
+            shipped: { en: 'Shipped', mn: 'Илгээсэн' },
+            delivered: { en: 'Delivered', mn: 'Хүргэгдсэн' },
+            cancelled: { en: 'Cancelled', mn: 'Цуцлагдсан' },
+            refunded: { en: 'Refunded', mn: 'Буцаагдсан' },
+        };
+
+        function getStatusLabel(status) {
+            const lang = getCurrentLang();
+            return STATUS_LABELS[status]?.[lang] || status;
+        }
+
+        function getStatusClass(status) {
+            if (['confirmed', 'delivered'].includes(status)) return 'status-success';
+            if (['cancelled', 'refunded'].includes(status)) return 'status-error';
+            return 'status-pending';
+        }
+
+        async function loadAccount() {
+            if (!api.isAuthenticated()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Load profile
+            try {
+                const profile = await api.getProfile();
+                document.getElementById('profile-greeting').textContent =
+                    profile.first_name || profile.username;
+                document.getElementById('profile-email').textContent = profile.email;
+                document.getElementById('profile-phone').textContent = profile.phone || '';
+            } catch {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Load orders
+            try {
+                const orders = await api.getOrders();
+                const listEl = document.getElementById('orders-list');
+                const noOrdersEl = document.getElementById('no-orders');
+
+                if (!orders || orders.length === 0) {
+                    listEl.style.display = 'none';
+                    noOrdersEl.style.display = 'block';
+                    return;
+                }
+
+                listEl.innerHTML = orders.map(order => `
+                    <div class="order-card">
+                        <div class="order-card-header">
+                            <strong>${order.order_number}</strong>
+                            <span class="order-status ${getStatusClass(order.status)}">
+                                ${getStatusLabel(order.status)}
+                            </span>
+                        </div>
+                        <div class="order-card-body">
+                            <span>${new Date(order.created_at).toLocaleDateString()}</span>
+                            <span>${order.item_count} ${getCurrentLang() === 'mn' ? 'бараа' : 'items'}</span>
+                            <strong>${formatPrice(order.total)}</strong>
+                        </div>
+                    </div>
+                `).join('');
+            } catch {
+                document.getElementById('orders-list').innerHTML =
+                    '<p>Захиалга ачааллахад алдаа гарлаа.</p>';
+            }
+        }
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            api.logout();
+            window.location.href = 'index.html';
+        });
+
+        loadAccount();
+    </script>
+</body>
+</html>

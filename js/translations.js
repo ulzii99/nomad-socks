@@ -180,6 +180,11 @@ const TRANSLATIONS = {
         "auth.logout": "Гарах",
         "auth.myAccount": "Миний бүртгэл",
 
+        // Account
+        "account.orders": "Миний захиалгууд",
+        "account.loading": "Ачааллаж байна...",
+        "account.noOrders": "Танд одоогоор захиалга байхгүй.",
+
         // Misc
         "breadcrumb.home": "Нүүр",
         "breadcrumb.shop": "Дэлгүүр"
@@ -360,6 +365,11 @@ const TRANSLATIONS = {
         "auth.loginLink": "Login",
         "auth.logout": "Logout",
         "auth.myAccount": "My Account",
+
+        // Account
+        "account.orders": "My Orders",
+        "account.loading": "Loading...",
+        "account.noOrders": "You don't have any orders yet.",
 
         // Misc
         "breadcrumb.home": "Home",

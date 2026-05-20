@@ -1530,3 +1530,82 @@ ul, ol {
     margin: 0.75rem 0;
     color: var(--color-text-light);
 }
+
+/* ========================================
+   Account Page
+   ======================================== */
+
+.account-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .account-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.account-sidebar .form-card {
+    text-align: center;
+}
+
+.account-sidebar h3 {
+    margin-bottom: 0.25rem;
+}
+
+.text-muted {
+    color: var(--color-text-light);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.account-orders h2 {
+    margin-bottom: 1rem;
+}
+
+.order-card {
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.order-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.order-card-body {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.9rem;
+    color: var(--color-text-light);
+}
+
+.order-status {
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-error {
+    background: #fef2f2;
+    color: var(--color-error);
+}
+
+.status-pending {
+    background: #fef9c3;
+    color: #854d0e;
+}
