@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: -apple-system, sans-serif; margin: 0; padding: 0; background: #f5f1eb; }
+        .container { max-width: 560px; margin: 0 auto; background: #fff; }
+        .header { background: #8B5A2B; color: #fff; padding: 24px; text-align: center; }
+        .header h1 { margin: 0; font-size: 20px; }
+        .content { padding: 24px; }
+        .content h2 { color: #2C2416; font-size: 18px; margin-top: 0; }
+        .order-info { background: #f7f3ed; border-radius: 6px; padding: 16px; margin-bottom: 20px; }
+        .order-info p { margin: 4px 0; font-size: 14px; color: #3D3426; }
+        .order-info strong { color: #2C2416; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th { text-align: left; border-bottom: 2px solid #e5ded3; padding: 8px 0; font-size: 13px; color: #6B5D4D; }
+        td { padding: 8px 0; border-bottom: 1px solid #e5ded3; font-size: 14px; }
+        .total-row td { border-top: 2px solid #2C2416; font-weight: 700; font-size: 16px; }
+        .footer { background: #f7f3ed; padding: 16px 24px; text-align: center; font-size: 12px; color: #6B5D4D; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nomad Socks</h1>
+        </div>
+        <div class="content">
+            {% if lang == "mn" %}
+            <h2>Захиалга баталгаажлаа!</h2>
+            <p>Таны захиалга амжилттай бүртгэгдлээ.</p>
+            {% else %}
+            <h2>Order Confirmed!</h2>
+            <p>Your order has been placed successfully.</p>
+            {% endif %}
+
+            <div class="order-info">
+                <p><strong>{% if lang == "mn" %}Захиалгын дугаар{% else %}Order Number{% endif %}:</strong> {{ order.order_number }}</p>
+                <p><strong>{% if lang == "mn" %}Огноо{% else %}Date{% endif %}:</strong> {{ order.created_at|date:"Y-m-d H:i" }}</p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>{% if lang == "mn" %}Бараа{% else %}Item{% endif %}</th>
+                        <th>{% if lang == "mn" %}Хэмжээ{% else %}Size{% endif %}</th>
+                        <th>{% if lang == "mn" %}Тоо{% else %}Qty{% endif %}</th>
+                        <th style="text-align:right">{% if lang == "mn" %}Үнэ{% else %}Price{% endif %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.product_name }}</td>
+                        <td>{{ item.size }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td style="text-align:right">${{ item.total_price }}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td colspan="3">{% if lang == "mn" %}Хүргэлт{% else %}Shipping{% endif %}</td>
+                        <td style="text-align:right">${{ order.shipping_cost }}</td>
+                    </tr>
+                    <tr class="total-row">
+                        <td colspan="3">{% if lang == "mn" %}Нийт{% else %}Total{% endif %}</td>
+                        <td style="text-align:right">${{ order.total }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            {% if order.shipping_address %}
+            <div class="order-info">
+                <p><strong>{% if lang == "mn" %}Хүргэлтийн хаяг{% else %}Shipping Address{% endif %}:</strong></p>
+                <p>{{ order.shipping_address.full_name }}<br>
+                {{ order.shipping_address.street_address }}<br>
+                {{ order.shipping_address.city }}{% if order.shipping_address.postal_code %}, {{ order.shipping_address.postal_code }}{% endif %}</p>
+            </div>
+            {% endif %}
+
+            <p style="font-size: 14px; color: #6B5D4D;">
+                {% if lang == "mn" %}
+                Асуулт байвал бидэнтэй холбоо барина уу: hello@nomadsocks.com
+                {% else %}
+                If you have any questions, contact us at hello@nomadsocks.com
+                {% endif %}
+            </p>
+        </div>
+        <div class="footer">
+            <p>Nomad Socks - {% if lang == "mn" %}Монголын чанартай оймс{% else %}Quality socks from Mongolia{% endif %}</p>
+        </div>
+    </div>
+</body>
+</html>

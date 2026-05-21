@@ -1609,3 +1609,43 @@ ul, ol {
     background: #fef9c3;
     color: #854d0e;
 }
+
+/* ========================================
+   Order Tracking Timeline
+   ======================================== */
+
+.timeline {
+    position: relative;
+    padding-left: 24px;
+}
+
+.timeline-entry {
+    position: relative;
+    padding-bottom: 1.25rem;
+    padding-left: 12px;
+    border-left: 2px solid var(--color-border);
+}
+
+.timeline-entry:last-child {
+    border-left-color: transparent;
+    padding-bottom: 0;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -7px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    border: 2px solid var(--color-white);
+}
+
+.timeline-content {
+    font-size: 0.9rem;
+}
+
+.timeline-content strong {
+    color: var(--color-dark);
+}

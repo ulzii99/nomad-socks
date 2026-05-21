@@ -185,6 +185,16 @@ const TRANSLATIONS = {
         "account.loading": "Ачааллаж байна...",
         "account.noOrders": "Танд одоогоор захиалга байхгүй.",
 
+        // Order Tracking
+        "tracking.title": "Захиалга хайх",
+        "tracking.subtitle": "Захиалгын дугаар болон имэйлээр хайна уу",
+        "tracking.orderNumber": "Захиалгын дугаар",
+        "tracking.email": "Имэйл",
+        "tracking.search": "Хайх",
+        "tracking.timeline": "Төлөв",
+        "tracking.items": "Бараа",
+        "tracking.searchAnother": "Өөр захиалга хайх",
+
         // Misc
         "breadcrumb.home": "Нүүр",
         "breadcrumb.shop": "Дэлгүүр"
@@ -370,6 +380,16 @@ const TRANSLATIONS = {
         "account.orders": "My Orders",
         "account.loading": "Loading...",
         "account.noOrders": "You don't have any orders yet.",
+
+        // Order Tracking
+        "tracking.title": "Track Order",
+        "tracking.subtitle": "Look up your order by number and email",
+        "tracking.orderNumber": "Order Number",
+        "tracking.email": "Email",
+        "tracking.search": "Search",
+        "tracking.timeline": "Status",
+        "tracking.items": "Items",
+        "tracking.searchAnother": "Search another order",
 
         // Misc
         "breadcrumb.home": "Home",

@@ -3,7 +3,11 @@
  * Handles all communication with the Django REST API.
  */
 
-const API_BASE = 'http://localhost:8001/api/v1';
+// In production (nginx), API is on same origin at /api/v1
+// In development, Django runs on port 8001
+const API_BASE = window.location.port === '8000'
+    ? 'http://localhost:8001/api/v1'
+    : '/api/v1';
 
 const api = {
     async get(endpoint) {

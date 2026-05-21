@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Захиалга хайх - Номад Сокс</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🧦</span>
+                <span class="logo-text">Nomad Socks</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" data-i18n="nav.home">Нүүр</a></li>
+                <li><a href="products.html" data-i18n="nav.shop">Дэлгүүр</a></li>
+                <li><a href="about.html" data-i18n="nav.about">Бидний тухай</a></li>
+                <li><a href="contact.html" data-i18n="nav.contact">Холбоо барих</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button class="lang-toggle" id="lang-toggle" onclick="toggleLanguage()" title="Switch to English">EN</button>
+                <a href="cart.html" class="cart-link">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-count" id="cart-count">0</span>
+                </a>
+                <button class="mobile-menu-btn" aria-label="Menu">☰</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h1 data-i18n="tracking.title">Захиалга хайх</h1>
+                <p data-i18n="tracking.subtitle">Захиалгын дугаар болон имэйлээр хайна уу</p>
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="container" style="max-width: 600px;">
+                <!-- Search Form -->
+                <div class="form-card" id="tracking-form-card">
+                    <form id="tracking-form">
+                        <div class="form-group">
+                            <label for="order_number" data-i18n="tracking.orderNumber">Захиалгын дугаар</label>
+                            <input type="text" id="order_number" name="order_number" placeholder="NS-XXXXXXXX" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" data-i18n="tracking.email">Имэйл</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div id="tracking-error" class="form-error" style="display:none;"></div>
+                        <button type="submit" class="btn btn-primary btn-full" data-i18n="tracking.search">Хайх</button>
+                    </form>
+                </div>
+
+                <!-- Order Details (hidden initially) -->
+                <div id="order-details" style="display:none;">
+                    <div class="form-card" style="margin-bottom: 1.5rem;">
+                        <div class="order-card-header" style="margin-bottom: 1rem;">
+                            <h2 id="detail-order-number" style="margin:0;"></h2>
+                            <span class="order-status" id="detail-status"></span>
+                        </div>
+                        <p id="detail-date" class="text-muted"></p>
+                    </div>
+
+                    <!-- Status Timeline -->
+                    <div class="form-card" style="margin-bottom: 1.5rem;">
+                        <h3 data-i18n="tracking.timeline">Төлөв</h3>
+                        <div id="status-timeline" class="timeline"></div>
+                    </div>
+
+                    <!-- Items -->
+                    <div class="form-card" style="margin-bottom: 1.5rem;">
+                        <h3 data-i18n="tracking.items">Бараа</h3>
+                        <div id="detail-items"></div>
+                        <div class="checkout-totals" style="margin-top: 1rem;">
+                            <div class="checkout-total-row">
+                                <span data-i18n="cart.subtotal">Нийлбэр</span>
+                                <span id="detail-subtotal"></span>
+                            </div>
+                            <div class="checkout-total-row">
+                                <span data-i18n="cart.shipping">Хүргэлт</span>
+                                <span id="detail-shipping"></span>
+                            </div>
+                            <div class="checkout-total-row checkout-total-final">
+                                <span data-i18n="cart.total">Нийт</span>
+                                <span id="detail-total"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-outline btn-full" onclick="document.getElementById('order-details').style.display='none'; document.getElementById('tracking-form-card').style.display='block';">
+                        <span data-i18n="tracking.searchAnother">Өөр захиалга хайх</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Nomad Socks</h3>
+                    <p data-i18n="footer.tagline">Монголын чанартай оймс</p>
+                </div>
+                <div class="footer-col">
+                    <h4 data-i18n="footer.quickLinks">Түргэн холбоос</h4>
+                    <ul>
+                        <li><a href="products.html" data-i18n="nav.shop">Дэлгүүр</a></li>
+                        <li><a href="about.html" data-i18n="nav.about">Бидний тухай</a></li>
+                        <li><a href="contact.html" data-i18n="nav.contact">Холбоо барих</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-i18n="footer.copyright">© 2024 Номад Сокс. Бүх эрх хуулиар хамгаалагдсан.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/translations.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        const STATUS_LABELS = {
+            pending: { en: 'Pending', mn: 'Хүлээгдэж байна' },
+            confirmed: { en: 'Confirmed', mn: 'Баталгаажсан' },
+            processing: { en: 'Processing', mn: 'Боловсруулж байна' },
+            shipped: { en: 'Shipped', mn: 'Илгээсэн' },
+            delivered: { en: 'Delivered', mn: 'Хүргэгдсэн' },
+            cancelled: { en: 'Cancelled', mn: 'Цуцлагдсан' },
+            refunded: { en: 'Refunded', mn: 'Буцаагдсан' },
+        };
+
+        document.getElementById('tracking-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errorEl = document.getElementById('tracking-error');
+            errorEl.style.display = 'none';
+
+            const orderNumber = document.getElementById('order_number').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const lang = getCurrentLang();
+
+            try {
+                const order = await api.get(`/orders/${orderNumber}/?email=${encodeURIComponent(email)}`);
+
+                // Header
+                document.getElementById('detail-order-number').textContent = order.order_number;
+                const statusEl = document.getElementById('detail-status');
+                statusEl.textContent = STATUS_LABELS[order.status]?.[lang] || order.status;
+                statusEl.className = 'order-status ' + (
+                    ['confirmed','delivered'].includes(order.status) ? 'status-success' :
+                    ['cancelled','refunded'].includes(order.status) ? 'status-error' : 'status-pending'
+                );
+                document.getElementById('detail-date').textContent = new Date(order.created_at).toLocaleString();
+
+                // Timeline
+                const timeline = document.getElementById('status-timeline');
+                if (order.status_history && order.status_history.length > 0) {
+                    timeline.innerHTML = order.status_history.map(entry => `
+                        <div class="timeline-entry">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <strong>${STATUS_LABELS[entry.status]?.[lang] || entry.status}</strong>
+                                ${entry.note ? `<span class="text-muted"> — ${entry.note}</span>` : ''}
+                                <div class="text-muted" style="font-size: 0.8rem;">${new Date(entry.created_at).toLocaleString()}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    timeline.innerHTML = `<p class="text-muted">${lang === 'mn' ? 'Төлөвийн түүх байхгүй' : 'No status history'}</p>`;
+                }
+
+                // Items
+                document.getElementById('detail-items').innerHTML = order.items.map(item => `
+                    <div class="checkout-item">
+                        <span>${item.product_name} (${item.size}) x${item.quantity}</span>
+                        <span>$${item.total_price}</span>
+                    </div>
+                `).join('');
+
+                document.getElementById('detail-subtotal').textContent = `$${order.subtotal}`;
+                document.getElementById('detail-shipping').textContent = `$${order.shipping_cost}`;
+                document.getElementById('detail-total').textContent = `$${order.total}`;
+
+                // Show details, hide form
+                document.getElementById('tracking-form-card').style.display = 'none';
+                document.getElementById('order-details').style.display = 'block';
+
+            } catch {
+                errorEl.textContent = lang === 'mn'
+                    ? 'Захиалга олдсонгүй. Дугаар болон имэйлээ шалгана уу.'
+                    : 'Order not found. Please check your order number and email.';
+                errorEl.style.display = 'block';
+            }
+        });
+
+        // Pre-fill from URL params
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('order')) {
+            document.getElementById('order_number').value = params.get('order');
+        }
+    </script>
+</body>
+</html>

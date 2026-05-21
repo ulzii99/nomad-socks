@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from cart.views import get_or_create_cart
+from .emails import send_order_confirmation, send_order_status_update
 from .models import Order, OrderItem, OrderStatusHistory
 from .serializers import CheckoutSerializer, OrderListSerializer, OrderSerializer
 
@@ -72,6 +73,9 @@ class CheckoutView(APIView):
             note="Order placed",
             created_by=request.user if request.user.is_authenticated else None,
         )
+
+        # Send confirmation email
+        send_order_confirmation(order)
 
         # Clear cart
         cart.items.all().delete()
@@ -163,6 +167,9 @@ class AdminOrderStatusUpdateView(APIView):
             note=note,
             created_by=request.user,
         )
+
+        # Notify customer
+        send_order_status_update(order, new_status, note)
 
         serializer = OrderSerializer(order)
         return Response(serializer.data)
