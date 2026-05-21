@@ -62,8 +62,8 @@ class DashboardView(APIView):
                 "by_status": status_breakdown,
             },
             "revenue": {
-                "total": str(revenue_total),
-                "last_30_days": str(revenue_30d),
+                "total": f"{revenue_total:.2f}",
+                "last_30_days": f"{revenue_30d:.2f}",
             },
             "inventory": {
                 "total_stock": total_stock,
